@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            font-family: sans-serif;
+        }
+    </style>
+    <title>
+        <%= user.username %>
+    </title>
+</head>
+
+<body>
+    <h1>Welcome <%= user.username %>
+    </h1>
+    <h3>Biography: <%= user.biography %>
+    </h3>
+
+    <form class="biography-form">
+        <input required type="text" name="biography" placeholder="Enter in biography...">
+        <button type="submit">Update biography</button>
+    </form>
+
+    <script>
+        const formDataSerialize = formData => {
+            const form_data = {};
+            for (let data of formData) form_data[data[0]] = data[1];
+            return form_data;
+        };
+        const biographyForm = document.querySelector(".biography-form");
+        biographyForm.addEventListener("submit", async e => {
+            e.preventDefault();
+            const newBiography = formDataSerialize(new FormData(e.target)).biography;
+            fetch(`http://localhost/updateBio/${newBiography}`).then(async data => {
+                console.log(await data.json());
+                //window.location.reload();
+            })
+        })
+    </script>
+</body>
+
+</html>

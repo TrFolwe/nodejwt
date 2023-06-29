@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login with JWT</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+
+        .form {
+            padding: 10px;
+            background-color: #2a2a2a;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        body {
+            height: 100vh;
+            background-color: #222;
+        }
+
+        .form-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px;
+        }
+
+        button[type="submit"] {
+            border: none;
+            outline: none;
+            padding: 8px;
+            background-color: green;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<body>
+    <h2 style="color: white; text-align: center;">Login / Register / Json Web Token</h2>
+    <div class="form-wrapper">
+        <form autocomplete="off" class="form login-form">
+            <h2 style="text-align: center;">Login</h2>
+            <div class="form-element">
+                <label for="">Username</label>
+                <input required type="text" name="username">
+            </div>
+            <div class="form-element">
+                <label for="">Password</label>
+                <input required type="password" name="password">
+            </div>
+            <button type="submit">Login</button>
+        </form>
+
+        <form autocomplete="off" class="form register-form">
+            <h2 style="text-align: center;">Register</h2>
+            <div class="form-element">
+                <label for="">Username</label>
+                <input required type="text" name="username">
+            </div>
+            <div class="form-element">
+                <label for="">Password</label>
+                <input required type="password" name="password">
+            </div>
+            <button type="submit">Register</button>
+        </form>
+    </div>
+</body>
+
+<script>
+    const i = (j) => document.querySelector(j);
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    const formDataSerialize = formData => {
+        const form_data = {};
+        for (let data of formData) form_data[data[0]] = data[1];
+        return form_data;
+    };
+    const loginForm = i(".login-form");
+    const registerForm = i(".register-form");
+
+    /* Login form */
+
+    loginForm.addEventListener("submit", async e => {
+        e.preventDefault();
+        const formData = formDataSerialize(new FormData(e.target));
+        const responseJSON = await (await fetch("http://localhost/login", {
+            method: "POST", headers: {
+                "Content-Type": "application/json",
+            }, body: JSON.stringify(formData)
+        })).json();
+        Swal.fire({
+            title: "Login output",
+            icon: typeof responseJSON.error !== "undefined" ? "error" : "success",
+            text: responseJSON.message,
+        }).then(() => {
+            if (responseJSON?.error) return;
+            window.location.reload();
+        });
+    });
+
+    /* Register Form*/
+    registerForm.addEventListener("submit", async e => {
+        e.preventDefault();
+        const formData = formDataSerialize(new FormData(e.target));
+        const responseJSON = await (await fetch("http://localhost/register", {
+            method: "POST", headers: {
+                "Content-Type": "application/json",
+            }, body: JSON.stringify(formData)
+        })).json();
+        Swal.fire({
+            title: "Register output",
+            icon: typeof responseJSON.error !== "undefined" ? "error" : "success",
+            text: responseJSON.message,
+        }).then(() => {
+            if (responseJSON?.error) return;
+            window.location.reload();
+        });
+    })
+</script>
+
+</html>
